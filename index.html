@@ -40,16 +40,24 @@
 			}
 
 			function rotateIt() {
-
+				copyToBuf();
+				cnvs.width = buf.height;
+				cnvs.height = buf.width;
+				ctx.save();
+				ctx.rotate(Math.PI / 2);
+				ctx.drawImage(buf, 0, -buf.height);
 			}
 		</script>
 	</head>
 	<body>
-		<input type="number" value="16" onchange="shredWidth = parseInt(this.value);" />
-		<canvas id="workArea"></canvas>
-		<canvas id="buffer" style="display:none;"></canvas>
+		Slice width: <input type="number" value="16" onchange="shredWidth = parseInt(this.value);" />
+		<br>
 		<button onclick="doShred();" >Shred it now!</button>
 		<button onclick="rotateIt();">Rotate it!</button>
+		<br>
+		<canvas id="workArea"></canvas>
+		<canvas id="buffer" style="display:none;"></canvas>
+		
 		<image id="defaultImage" style="display: none;" src="goat.jpg"></image>
 		<script type="text/javascript">
 			cnvs = document.getElementById("workArea");
