@@ -54,12 +54,22 @@
 				cnvs.height = defaultImg.height;
 				ctx.drawImage(defaultImg, 0, 0);
 			}
+
+			function shredXY() {
+				doShred();
+				rotateIt();
+				doShred();
+				rotateIt();
+				rotateIt();
+				rotateIt();
+			}
 		</script>
 	</head>
 	<body>
 		<div>
 			Slice width: <input type="number" value="16" onchange="shredWidth = parseInt(this.value);" /> <br> <br>
 			<button onclick="doShred();" >Shred it now!</button>
+			<button onclick="shredXY();">Double shred!!</button>
 			<button onclick="rotateIt();">Rotate it!</button>
 			<button onclick="resetIt();">Reset image.</button>
 		</div>
