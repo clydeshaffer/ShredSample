@@ -11,6 +11,10 @@
 			var shredWidth = 16;
 			var defaultImg = null;
 
+			var xCount = 0;
+			var yCount = 0;
+			var rotations = 0;
+
 			function copyToBuf() {
 				buf.width = cnvs.width;
 				buf.height = cnvs.height;
@@ -38,6 +42,12 @@
 					ctx.drawImage(buf, (i+1) * shredWidth, 0, shredWidth, cnvs.height, 
 						(i / 2) * shredWidth + halfWidth, 0, shredWidth, cnvs.height);
 				}
+				if(rotations % 2 == 0) {
+					xCount++;
+				} else {
+					yCount++;
+				}
+				updateCounters();
 			}
 
 			function rotateIt() {
@@ -47,12 +57,15 @@
 				ctx.save();
 				ctx.rotate(Math.PI / 2);
 				ctx.drawImage(buf, 0, -buf.height);
+				rotations = (rotations+1) % 4;
 			}
 
 			function resetIt() {
 				cnvs.width = defaultImg.width;
 				cnvs.height = defaultImg.height;
 				ctx.drawImage(defaultImg, 0, 0);
+				rotations = 0;
+				resetCounters();
 			}
 
 			function shredXY() {
@@ -62,6 +75,17 @@
 				rotateIt();
 				rotateIt();
 				rotateIt();
+			}
+
+			function updateCounters() {
+				document.getElementById("xcount").innerHTML = xCount;
+				document.getElementById("ycount").innerHTML = yCount;
+			}
+
+			function resetCounters() {
+				xCount = 0;
+				yCount = 0;
+				updateCounters();
 			}
 		</script>
 	</head>
@@ -75,6 +99,16 @@
 		</div>
 		<br>
 		You can also drag/drop in an image that you want to test this on.<br><br>
+
+		<div>
+			Shred odometer:
+			<ul>
+				<li>X: <span id="xcount">0</span></li>
+				<li>Y: <span id="ycount">0</span></li>
+			</ul>
+			<button onclick="resetCounters();">Reset counter</button>
+		</div>
+		<br>
 		<canvas id="workArea"></canvas>
 		<canvas id="buffer" style="display:none;"></canvas>
 		
@@ -90,6 +124,8 @@
 				cnvs.width = defaultImg.width;
 				cnvs.height = defaultImg.height;
 				ctx.drawImage(defaultImg, 0, 0);
+				rotations = 0;
+				resetCounters();
 			});
 
 			"dragenter dragstart dragend dragleave dragover drag".split(" ").map(function(evname) {
