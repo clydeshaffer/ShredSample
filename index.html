@@ -1,0 +1,68 @@
+<html>
+	<head>
+		<title>
+			Shred Sample Simulator
+		</title>
+		<script type="text/javascript">
+			var cnvs = null;
+			var ctx = null;
+			var buf = null;
+			var bCtx = null;
+			var shredWidth = 16;
+
+			function copyToBuf() {
+				buf.width = cnvs.width;
+				buf.height = cnvs.height;
+				bCtx.drawImage(cnvs, 0, 0);
+			}
+
+			function crop(width) {
+				copyToBuf();
+				cnvs.width = width;
+				ctx.drawImage(buf, 0, 0);
+			}
+
+			function doShred() {
+
+				var slices = Math.floor(cnvs.width / shredWidth);
+				slices -= slices % 2;
+				crop(shredWidth * slices); //more straighforward for even integer number of slices
+
+				copyToBuf();
+				ctx.clearRect(0, 0, cnvs.width, cnvs.height);
+				var halfWidth = cnvs.width / 2;
+				for(i = 0; i < slices; i += 2) {
+					ctx.drawImage(buf, i * shredWidth, 0, shredWidth, cnvs.height, 
+						(i / 2) * shredWidth, 0, shredWidth, cnvs.height);
+					ctx.drawImage(buf, (i+1) * shredWidth, 0, shredWidth, cnvs.height, 
+						(i / 2) * shredWidth + halfWidth, 0, shredWidth, cnvs.height);
+				}
+			}
+
+			function rotateIt() {
+
+			}
+		</script>
+	</head>
+	<body>
+		<input type="number" value="16" onchange="shredWidth = parseInt(this.value);" />
+		<canvas id="workArea"></canvas>
+		<canvas id="buffer" style="display:none;"></canvas>
+		<button onclick="doShred();" >Shred it now!</button>
+		<button onclick="rotateIt();">Rotate it!</button>
+		<image id="defaultImage" style="display: none;" src="goat.jpg"></image>
+		<script type="text/javascript">
+			cnvs = document.getElementById("workArea");
+			buf = document.getElementById("buffer");
+			ctx = cnvs.getContext("2d");
+			bCtx = buf.getContext("2d");
+
+			var defaultImg = document.getElementById("defaultImage");
+			defaultImg.addEventListener("load", function() {
+				cnvs.width = defaultImg.width;
+				cnvs.height = defaultImg.height;
+				ctx.drawImage(defaultImg, 0, 0);
+			})
+		</script>
+	</body>
+</html>
