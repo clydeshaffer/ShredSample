@@ -9,6 +9,7 @@
 			var buf = null;
 			var bCtx = null;
 			var shredWidth = 16;
+			var defaultImg = null;
 
 			function copyToBuf() {
 				buf.width = cnvs.width;
@@ -47,14 +48,23 @@
 				ctx.rotate(Math.PI / 2);
 				ctx.drawImage(buf, 0, -buf.height);
 			}
+
+			function resetIt() {
+				cnvs.width = defaultImg.width;
+				cnvs.height = defaultImg.height;
+				ctx.drawImage(defaultImg, 0, 0);
+			}
 		</script>
 	</head>
 	<body>
-		Slice width: <input type="number" value="16" onchange="shredWidth = parseInt(this.value);" />
+		<div>
+			Slice width: <input type="number" value="16" onchange="shredWidth = parseInt(this.value);" /> <br> <br>
+			<button onclick="doShred();" >Shred it now!</button>
+			<button onclick="rotateIt();">Rotate it!</button>
+			<button onclick="resetIt();">Reset image.</button>
+		</div>
 		<br>
-		<button onclick="doShred();" >Shred it now!</button>
-		<button onclick="rotateIt();">Rotate it!</button>
-		<br>
+		You can also drag/drop in an image that you want to test this on.<br><br>
 		<canvas id="workArea"></canvas>
 		<canvas id="buffer" style="display:none;"></canvas>
 		
@@ -65,12 +75,39 @@
 			ctx = cnvs.getContext("2d");
 			bCtx = buf.getContext("2d");
 
-			var defaultImg = document.getElementById("defaultImage");
+			defaultImg = document.getElementById("defaultImage");
 			defaultImg.addEventListener("load", function() {
 				cnvs.width = defaultImg.width;
 				cnvs.height = defaultImg.height;
 				ctx.drawImage(defaultImg, 0, 0);
-			})
+			});
+
+			"dragenter dragstart dragend dragleave dragover drag".split(" ").map(function(evname) {
+				window.addEventListener(evname, function(e) {
+					e = e || event;
+			  		e.preventDefault();
+			  		return false;
+				}, false);
+			});
+
+			window.addEventListener("drop", function(ev) {
+				ev = ev || event;
+				ev.preventDefault();
+				var files = ev.dataTransfer.files;
+				if (files.length > 0) {
+					var file = files[0];
+					if (typeof FileReader !== "undefined" && file.type.indexOf("image") != -1) {
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							defaultImg.src = e.target.result;
+						}
+						reader.readAsDataURL(file);
+					}
+				}
+				
+				return false;
+			}, false);
+
 		</script>
 	</body>
 </html>
