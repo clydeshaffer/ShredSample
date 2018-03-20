@@ -14,6 +14,8 @@
 			var xCount = 0;
 			var yCount = 0;
 			var rotations = 0;
+			var iterations = 1;
+			var iterationCounter = 0;
 
 			function copyToBuf() {
 				buf.width = cnvs.width;
@@ -49,6 +51,14 @@
 				}
 				updateCounters();
 			}
+			
+			function doShreds() {
+				doShred();
+				iterationCounter --;
+				if(iterationCounter > 0) {
+					window.requestAnimationFrame(doShreds);
+				}
+			}
 
 			function rotateIt() {
 				copyToBuf();
@@ -75,6 +85,10 @@
 				rotateIt();
 				rotateIt();
 				rotateIt();
+				iterationCounter --;
+				if(iterationCounter > 0) {
+					window.requestAnimationFrame(shredXY);
+				}
 			}
 
 			function updateCounters() {
@@ -91,9 +105,10 @@
 	</head>
 	<body>
 		<div>
-			Slice width: <input type="number" value="16" onchange="shredWidth = parseInt(this.value);" /> <br> <br>
-			<button onclick="doShred();" >Shred it now!</button>
-			<button onclick="shredXY();">Double shred!!</button>
+			Slice width: <input type="number" value="16" onchange="shredWidth = parseInt(this.value);" />
+			Iterations: <input type="number" value="1" onchange="iterations = parseInt(this.value);"/><br> <br>
+			<button onclick="iterationCounter = iterations; doShreds();" >Shred it now!</button>
+			<button onclick="iterationCounter = iterations; shredXY();">Double shred!!</button>
 			<button onclick="rotateIt();">Rotate it!</button>
 			<button onclick="resetIt();">Reset image.</button>
 		</div>
